@@ -1,6 +1,11 @@
+from typing import Optional, Any
+
 import torch
 import torch.nn.functional as F
 import pytorch_lightning as pl
+from pytorch_lightning.loggers import WandbLogger
+from pytorch_lightning.utilities.types import STEP_OUTPUT
+
 from nano_gpt_lightning.models.nano_gpt import NanoGPT
 
 
@@ -10,20 +15,28 @@ class LitNanoGPT(pl.LightningModule):
         self.args = init_args
         self.net = NanoGPT(config=init_args)
         self.loss_function = F.cross_entropy
+        self.wandb_logger = WandbLogger(project="test")
 
     def training_step(self, batch, batch_idx):
         x, y = batch
         logits = self.net(x)
         loss = self.loss_function(logits.view(-1, logits.size(-1)), y.view(-1), ignore_index=-1)
-        self.log("train_loss", loss)
         return loss
+
+    def training_step_end(self, step_output):
+        self.wandb_logger.log_metrics({"train_loss": step_output})
+        return step_output
 
     def validation_step(self, batch, batch_idx):
         x, y = batch
         logits = self.net(x)
         loss = self.loss_function(logits.view(-1, logits.size(-1)), y.view(-1), ignore_index=-1)
-        self.log("val_loss", loss)
+
         return loss
+
+    def validation_step_end(self, step_output: Any, **kwargs: Any) -> Optional[STEP_OUTPUT]:
+        self.wandb_logger.log_metrics({"val_loss": step_output})
+        return step_output
 
     def configure_optimizers(self):
         """

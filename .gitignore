@@ -128,3 +128,4 @@ dmypy.json
 # Pyre type checker
 .pyre/
 nano_gpt_lightning/scripts/lightning_logs
+nano_gpt_lightning/scripts/wandb
