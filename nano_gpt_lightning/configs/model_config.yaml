@@ -1,0 +1,14 @@
+model:
+  init_args:
+    core:
+      optim:
+        lr: 0.02
+        weight_decay: 0.99
+      batch_size: 1
+      num_workers: 8
+    block_size: 1024
+    vocab_size: 50257
+    n_layer: 12
+    n_head: 12
+    n_embd: 768
+    dropout: 0.1
