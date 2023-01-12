@@ -1,0 +1,4 @@
+pytorch-lightning~=1.8.6
+tiktoken~=0.1.2
+wandb~=0.13.7
+jsonargparse[signatures]~=4.15.2
